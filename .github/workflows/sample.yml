@@ -1,3 +1,5 @@
+name: Sample Firebase Distribution Workflow
+
 on:
   push:
     branches:
