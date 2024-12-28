@@ -39,7 +39,7 @@ class LoginViewModel : ViewModel() {
     }
 
     fun onLogin() {
-        if (_username.value == "admin" && _password.value == "1234") {
+        if (_username.value == "admin" && _password.value == "123456") {
             _generalError.value = null
         } else {
             _generalError.value = "아이디 또는 비밀번호가 올바르지 않습니다."
