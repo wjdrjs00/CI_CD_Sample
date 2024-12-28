@@ -29,7 +29,7 @@ class LoginViewModelTest {
         val viewModel = LoginViewModel()
 
         viewModel.onUsernameChange("admin")
-        viewModel.onPasswordChange("1234")
+        viewModel.onPasswordChange("123456")
         viewModel.onLogin()
 
         assertNull(viewModel.generalError.value)
