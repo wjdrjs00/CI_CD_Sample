@@ -1,14 +1,13 @@
-name: Sample Workflow
 on:
   push:
     branches:
       - release/**
 
 jobs:
-  common-steps:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
-      # 단계 1: 저장소 코드 가져오기: 이후 단계에서 저장소 코드를 사용할 수 있도록 준비합니다.
+      # 단계 1: 저장소 코드 가져오기
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -18,7 +17,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-        # Gradle 빌드 및 테스트를 위한 Java Development Kit을 설정합니다.
+        # Gradle 빌드 및 테스트를 위해 JDK를 설정합니다.
 
       # 단계 3: Gradle 실행 파일에 실행 권한 부여
       - name: Grant execute permission for gradlew
@@ -35,30 +34,27 @@ jobs:
             gradle-cache-${{ runner.os }}-
         # Gradle 의존성을 캐싱하여 빌드 시간을 단축합니다.
 
-  release:
-    needs: common-steps
-    runs-on: ubuntu-latest
-    steps:
-      # 단계 1: 단위 테스트 실행
+      # 단계 5: 단위 테스트 실행
       - name: Run Tests
         run: ./gradlew test
         # 애플리케이션 기능을 검증하기 위해 단위 테스트를 실행합니다.
 
-      # 단계 2: Lint 검사 실행
+      # 단계 6: Lint 검사 실행
       - name: Verify Lint
         run: ./gradlew lint
         # 코드 품질 및 일관성을 보장하기 위해 Lint 검사를 실행합니다.
 
-      # 단계 3: 릴리즈 APK 빌드
+      # 단계 7: 릴리즈 APK 빌드
       - name: Build APK
         run: ./gradlew assembleRelease
         # 애플리케이션의 릴리즈 APK를 생성합니다.
 
-      # 단계 4: Firebase App Distribution에 APK 업로드
+      # 단계 8: Firebase App Distribution에 APK 업로드
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: sample-tester
-          file: app/build/outputs/apk/release/app-release.apk
+          file: app/build/outputs/apk/release/app-release-unsigned.apk
+        # 릴리즈 APK를 Firebase 테스터 그룹에 배포합니다.
